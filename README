@@ -1,0 +1,7 @@
+# RESP Parser
+
+C++ parser for the RESP protocol used by Redis. Developed to use in the Codecrafters. Right now supports the following types:
+* Simple String
+* Bulk String
+* Integer
+* Array
