@@ -127,8 +127,13 @@ std::string RedisExpression::to_string() {
     return "ERROR!";
 }
 
+std::string format_simple_string(std::string s) {
+    return "+" + s + "\r\n";
+}
 
-
+std::string format_bulk_string(std::string s) {
+    return "$" + std::to_string(s.length()) + "\r\n" + s + "\r\n";
+}
 
 int main() {
     std::string s;
