@@ -1,6 +1,7 @@
 #include "Protocol.h"
 
 #include <iostream>
+#include <stdexcept>
 
 RedisExpression::RedisExpression() : array() {
     type = RedisType::Init;
@@ -125,6 +126,20 @@ std::string RedisExpression::to_string() {
         return ret;
     }
     return "ERROR!";
+}
+
+int RedisExpression::get_int_value() {
+    if (type != RedisType::Integer) {
+        throw std::logic_error("This RedisExpression is not of the type RedisType::Integer");
+    }
+    return std::get<int>(value);
+}
+
+std::string RedisExpression::get_string_value() {
+    if (type != RedisType::SimpleString && type != RedisType::BulkString) {
+        throw std::logic_error("This RedisExpression is not of RedisType::SimpleString or RedisType::BulkString");
+    }
+    return std::get<std::string>(value);
 }
 
 std::string format_simple_string(std::string s) {

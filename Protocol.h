@@ -30,6 +30,9 @@ class RedisExpression {
         void consume_input(std::string& s);
 
         std::string to_string();
+
+        int get_int_value();
+        std::string get_string_value();
 };
 
 std::string format_simple_string(std::string s);
