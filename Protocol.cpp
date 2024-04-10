@@ -72,8 +72,8 @@ void RedisExpression::consume_input(std::string& s) {
     int next_rn = s.find("\r\n");
     switch (type) {
         case RedisType::BulkString:
-            if (next_rn == std::string::npos) {
-                // following is to handle file transfers, which do not have the ending \r\n; as well as incomplete \r\n (only \r) at the end of the string
+            // following is to handle file transfers, which do not have the ending \r\n; as well as incomplete \r\n (only \r) at the end of the string
+            if (next_rn == std::string::npos || next_rn > length - std::get<std::string>(value).length() + 1) {
                 int chars_to_read = std::min(s.length(), length - std::get<std::string>(value).length()); // how much of the input s we should read
                 value = std::get<std::string>(value) + s.substr(0, chars_to_read);
                 if (std::get<std::string>(value).length() == length) {
@@ -148,40 +148,4 @@ std::string format_simple_string(std::string s) {
 
 std::string format_bulk_string(std::string s) {
     return "$" + std::to_string(s.length()) + "\r\n" + s + "\r\n";
-}
-
-int main() {
-    std::string s;
-
-    // s = "*2\r\n*3\r\n:1\r\n:2\r\n:3\r\n*2\r\n+Hello\r\n+World\r\n";
-    // s = "*2\r\n$5\r\nhello\r\n$5\r\nworld\r\n";
-    // s = "*1\r\n*2\r\n+Hello\r\n+World\r\n";
-    // s = "*2\r\n*2\r\n+Hello\r\n+World\r\n*2\r\n+Hello\r\n+World\r\n";
-
-    // RedisExpression exp;
-    // exp.consume_input(s);
-    // std::cout << exp.finished << " " << exp.to_string() << std::endl;
-
-
-    // s = "*2\r\n*3\r\n:1\r\n:2\r\n:3\r\n*2\r\n+Hel";
-    // RedisExpression exp;
-    // exp.consume_input(s);
-    // std::cout << exp.finished << " " << exp.to_string() << std::endl;
-    // std::cout << s << std::endl;
-
-    // s += "lo\r\n+World\r\n";
-    // exp.consume_input(s);
-    // std::cout << exp.finished << " " << exp.to_string() << std::endl;
-    // std::cout << s << std::endl;
-
-
-    s = "$5\r\nHello\r";
-    RedisExpression exp1;
-    exp1.consume_input(s);
-    std::cout << exp1.finished << " " << exp1.to_string() << std::endl;
-
-    s += "\n$5\r\nWorld\r\n";
-    RedisExpression exp2;
-    exp2.consume_input(s);
-    std::cout << exp2.finished << " " << exp2.to_string() << std::endl;
 }
