@@ -32,4 +32,6 @@ class RedisExpression {
         std::string to_string();
 };
 
+std::string format_bulk_string(std::string s);
+
 #endif
